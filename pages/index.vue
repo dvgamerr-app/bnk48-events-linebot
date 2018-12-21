@@ -2,10 +2,10 @@
   <section class="container">
     <div>
       <h1 class="title">
-        bnk48-events-linebot
+        BNK48 Events LINE BOT
       </h1>
       <h2 class="subtitle">
-        bnk48 website and linebot api.
+        BNK48 event from official website and linebot api.
       </h2>
       <div class="links">
         aaa

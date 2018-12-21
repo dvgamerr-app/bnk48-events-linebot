@@ -22,6 +22,8 @@ async function start() {
     await builder.build()
   }
 
+  app.use('/bot', require('./linebot'))
+
   // Give nuxt middleware to express
   app.use(nuxt.render)
 
