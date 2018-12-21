@@ -21,19 +21,21 @@ router.post('/', async (req, res) => {
   if (!events || events.length === 0) return res.end()
   try {
     for (const event of events) {
-      console.log(events)
       if (event.type === 'message' && event.message.type === 'text') {
+        let { userId } = event.source
         let { text } = event.message
         let oshi = /oshi\W(?<name>.*)/ig.exec(text)
         let hen = /hen\W(?<name>.*)/ig.exec(text)
         if (oshi) {
           let names = [ ...new Set(oshi.groups.name.split(/\W/ig)) ]
-          console.log('oshi', names)
-          await client.replyMessage(event.replyToken, { type: 'text', text: 'กำลังติดตาม ' + names.join(' ') })
+
+          let profile = await client.getProfile(userId)
+          await client.replyMessage(event.replyToken, { type: 'text', text: `เพิ่มเมมเบอร์ ${names.length} คน` })
         } else if (hen) {
           let names = [ ...new Set(hen.groups.name.split(/\W/ig)) ]
-          console.log('hen', names)
-          await client.replyMessage(event.replyToken, { type: 'text', text: 'ยกเลิกติดตาม ' + names.join(' ') })
+
+
+          await client.replyMessage(event.replyToken, { type: 'text', text: `ลบเมมเบอร์ ${names.length} คน` })
         }
         console.log(event.timestamp, event.replyToken, text)
       } else {
