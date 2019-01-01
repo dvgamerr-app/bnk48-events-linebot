@@ -28,7 +28,8 @@ const OtaUpdateOshi = async (BnkOta, newMember, source) => {
     await new BnkOta(member).save()
     return newMember.length
   } else {
-    await BnkOta.updateOneById(myMember._id, { oshi: [ ...new Set(myMember.oshi.concat(newMember)) ], updated: new Date() })
+    
+    await BnkOta.findOneAndUpdate(myMember._id, { oshi: [ ...new Set(myMember.oshi.concat(newMember)) ], updated: new Date() })
     return newMember.filter(a => myMember.oshi.indexOf(a) === -1).length
   }
 }
@@ -61,9 +62,7 @@ router.post('/', async (req, res) => {
           let newOshi = 0
 
           if (oshi.groups.name === 'all') {
-            for (const member of await BnkMember.find({})) {
-              myOshi.push(member.id)
-            }
+            for (const member of await BnkMember.find({})) myOshi.push(member.id)
             newOshi = await OtaUpdateOshi(BnkOta, myOshi, event.source)
           } else {
             let names = [ ...new Set(oshi.groups.name.split(/\W/ig)) ]
@@ -74,13 +73,22 @@ router.post('/', async (req, res) => {
             }
             newOshi = await OtaUpdateOshi(BnkOta, myOshi, event.source)
           }
-          let msg = `เมมเบอร์ ${myOshi.length}${newOshi ? `*(+${newOshi})*` : ''} คน.`
+
+          let { groupId, roomId, type, userId } = event.source
+          let myMember = await BnkOta.findOne({ roomId: (type === 'group' ? groupId :  type === 'room' ? roomId : userId) })
+
+          let msg = `เมมเบอร์ ${myMember.oshi.length}${newOshi ? ` (+${newOshi})` : ''} คน.`
           await client.replyMessage(event.replyToken, { type: 'text', text: msg })
         } else if (hen) {
           let henOshi = 0
           let myOshi = []
+          let { groupId, roomId, type, userId } = event.source
+          
+          let myMember = await BnkOta.findOne({ roomId: (type === 'group' ? groupId :  type === 'room' ? roomId : userId) })
+          if (!myMember) continue
+
           if (hen.groups.name === 'all') {
-            await BnkOta.updateOneById(myMember._id, { oshi: [], updated: new Date() })
+            await BnkOta.findOneAndUpdate(myMember._id, { oshi: [], updated: new Date() })
           } else {
             let names = [ ...new Set(hen.groups.name.split(/\W/ig)) ]
             for (const name of names) {
@@ -89,16 +97,13 @@ router.post('/', async (req, res) => {
               myOshi.push(member.id)
             }
 
-            let myMember = await BnkOta.findOne({ roomId: (type === 'group' ? groupId :  type === 'room' ? roomId : userId) })
-            if (!myMember) continue
-
             henOshi = myMember.oshi.filter(a => myOshi.indexOf(a) > -1).length
             myOshi = myMember.oshi.filter(a => myOshi.indexOf(a) === -1)
 
-            await BnkOta.updateOneById(myMember._id, { oshi: myOshi, updated: new Date() })
+            await BnkOta.findOneAndUpdate(myMember._id, { oshi: myOshi, updated: new Date() })
           }
 
-          let msg = `เมมเบอร์ ${myOshi.length}${henOshi ? `*(-${henOshi})*` : ''} คน.`
+          let msg = `เมมเบอร์ ${myOshi.length}${henOshi ? ` (-${henOshi})` : ''} คน.`
           await client.replyMessage(event.replyToken, { type: 'text', text: !myOshi.length ? 'ยกเลิกติดตามเมมเบอร์' : msg })
         }
       // } else {
