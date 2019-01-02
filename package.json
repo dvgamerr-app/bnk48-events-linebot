@@ -8,9 +8,8 @@
     "dev": "env-cmd .env nodemon server/index.js --watch server",
     "build": "nuxt build",
     "start": "node server/index.js",
-    "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "deploy": "npm run precommit && npm run docker",
+    "deploy": "npm run precommit && npm run build && npm run docker",
     "precommit": "git checkout . && git pull origin master && npm i --only=prod",
     "docker": "docker restart app-bnk48 && docker logs --follow app-bnk48"
   },
