@@ -64,7 +64,8 @@ const OtaUpdateOshi = async (BnkOta, newMember, source) => {
 
 const handlerCommand = async (cmd, args, event) => {
   args = args.toLowerCase()
-  let { groupId, roomId, type, userId } = event.source
+  let { source } = event
+  let { groupId, roomId, type, userId } = source
   let sender = null
   let myOshi = []
   let myMember = []
@@ -76,8 +77,9 @@ const handlerCommand = async (cmd, args, event) => {
       let newOshi = 0
 
       if (args === 'all') {
-        for (const member of await BnkMember.find({})) myOshi.push(member.id)
-        newOshi = await OtaUpdateOshi(BnkOta, myOshi, event.source)
+        for (const member of await BnkMember.find({})) { myOshi.push(member.id) }
+
+        newOshi = await OtaUpdateOshi(BnkOta, myOshi, source)
       } else {
         let names = [ ...new Set(args.split(/\W/ig)) ]
         for (const name of names) {
@@ -85,7 +87,7 @@ const handlerCommand = async (cmd, args, event) => {
           if (!member || !name) continue
           myOshi.push(member.id)
         }
-        newOshi = await OtaUpdateOshi(BnkOta, myOshi, event.source)
+        newOshi = await OtaUpdateOshi(BnkOta, myOshi, source)
       }
 
       myMember = await BnkOta.findOne({ roomId: (type === 'group' ? groupId :  type === 'room' ? roomId : userId) })
