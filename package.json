@@ -29,6 +29,8 @@
     "eslint": "^5.11.0",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-vue": "^5.0.0",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "youch": "^2.0.10",
+    "youch-terminal": "^1.0.0"
   }
 }
