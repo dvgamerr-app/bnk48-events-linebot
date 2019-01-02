@@ -10,7 +10,9 @@
     "start": "node server/index.js",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "precommit": "npm run lint"
+    "deploy": "npm run precommit && npm run docker",
+    "precommit": "git checkout . && git pull origin master && npm i --only=prod",
+    "docker": "docker restart app-bnk48 && docker logs --follow app-bnk48"
   },
   "dependencies": {
     "@line/bot-sdk": "^6.4.0",
