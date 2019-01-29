@@ -1,15 +1,15 @@
 import express from 'express'
 import consola from 'consola'
 import { Nuxt, Builder } from 'nuxt'
+
+import config from './nuxt.config.js'
+
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3001
 
-app.set('port', port)
-
 // Import and Set Nuxt.js options
-import config from './nuxt.config.js';
-config.dev = !(process.env.NODE_ENV === 'production');
+config.dev = !(process.env.NODE_ENV === 'production')
 
 app.use('/bot', require('./api/linebot'))
 
