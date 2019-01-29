@@ -5,10 +5,11 @@
   "author": "Mr.Kananek Thongkam",
   "private": true,
   "scripts": {
-    "dev": "env-cmd .env nodemon server/index.js --watch server",
-    "build": "nuxt build",
-    "start": "node server/index.js",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "dev": "env-cmd .env nuxt",
+    "serv": "env-cmd .env backpack dev",
+    "build": "npm run eslint && nuxt build && backpack build",
+    "start": "node dist/main.js",
+    "eslint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "deploy": "npm run precommit && npm run build && npm run docker",
     "precommit": "git checkout . && git pull origin master && npm i --only=prod",
     "docker": "docker restart web-bnk48 && docker logs --follow web-bnk48"
@@ -31,6 +32,7 @@
     "backpack-core": "^0.7.0",
     "eslint": "^5.12.1",
     "eslint-loader": "^2.0.0",
+    "eslint-plugin-backpack": "^0.2.2",
     "eslint-plugin-vue": "^5.1.0",
     "nodemon": "^1.11.0",
     "youch": "^2.0.10",
